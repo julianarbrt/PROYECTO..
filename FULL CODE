@@ -1,0 +1,133 @@
+import PyPDF2
+import re
+from fpdf import FPDF
+
+#//<<------------------------------------------------>>//
+# Función Lectura de primer PDF
+# Abrir el PDF
+Archivo1 = open("D:\Vital Remains.pdf", "rb")
+
+# Leer el PDF
+Lector_PDF = PyPDF2.PdfReader(Archivo1)
+
+# Almacenar texto del Archivo1 en una lista:
+Texto_completo_PDF1 = ""
+
+# Ciclo para leer todas las paginas
+for pagina in range(len(Lector_PDF.pages)):
+
+    # Establecer el contador de paginas en la pagina 1 y leerla
+    Leer_pagina = Lector_PDF.pages[pagina]
+
+    # Extraer texto de la pagina
+    texto_PDF1 = Leer_pagina.extract_text()
+
+    #Quitar caracteres que no contamos como palabras
+    eliminar = "\n,;:/'?¡¿!()[]+-*%_.•"
+    for caracter in eliminar:
+        texto_PDF1 = texto_PDF1.replace(caracter, "")
+
+    #Agregar a la variable texto_Diccionario
+    Texto_completo_PDF1 +=texto_PDF1
+
+
+# Convertir a minusculas las palabras
+Texto_completo_PDF1 = Texto_completo_PDF1.lower()
+
+Texto_completo_PDF1_arreglo = Texto_completo_PDF1.split()
+
+#//<<------------------------------------------------>>//    
+
+   
+
+
+#//<<------------------------------------------------>>//
+# Función de Lectura del diccionario
+
+# Abrir el PDF
+Diccionario = open("D:\Diccionario vital.pdf", "rb")
+
+# Leer el PDF
+Lector_Diccionario = PyPDF2.PdfReader(Diccionario)
+
+# Almacenar texto del Archivo1 en una lista:
+Texto_Completo_Diccionario = ""
+
+# Ciclo para leer todas las paginas
+for pagina in range(len(Lector_Diccionario.pages)):
+
+    # Establecer el contador de paginas en la pagina 1 y leerla
+    Leer_pagina = Lector_Diccionario.pages[pagina]
+
+    # Extraer texto de la pagina
+    texto_Diccionario = Leer_pagina.extract_text()
+    
+    #Quitar caracteres que no contamos como palabras
+    eliminar = "\n,;:/'?¡¿!()[]+-*%_."
+   
+    #Si esta en el texto de la lista, se elimina
+    for caracter in eliminar:
+        texto_Diccionario = texto_Diccionario.replace(caracter, "")
+
+    #Agregar a la variable texto_Diccionario
+    Texto_Completo_Diccionario +=texto_Diccionario
+
+
+# Convertir a minusculas las palabras
+Texto_Completo_Diccionario = Texto_Completo_Diccionario.lower()
+Texto_completo_Diccionario_arreglo = Texto_Completo_Diccionario.split()
+
+#//<<------------------------------------------------>>//
+
+
+# Comparar textos por palabras
+# Contar las repeticiones
+frecuencia_palabra = {palabra: 0 for palabra in Texto_completo_Diccionario_arreglo}
+for palabra_diccionario in Texto_completo_Diccionario_arreglo:
+    for palabra_pdf in Texto_completo_PDF1_arreglo:
+        if palabra_diccionario == palabra_pdf:
+            frecuencia_palabra[palabra_diccionario] += 1
+
+for palabra, frecuencia in frecuencia_palabra.items():
+    print(f"{palabra}: {frecuencia}")
+        
+
+# Comparar frases
+# Mi patron de frases se conforma por encontrar un solo espacio o una coma
+Patron = re.compile(r"[^\s,]+(?:\s[^\s,]+)*")
+
+# Buscar el patron para frase en el texto del Diccionario
+Texto_completo_Diccionario_arreglo = Patron.findall(Texto_Completo_Diccionario)
+frecuancia_frase = {}
+
+for frase in Texto_completo_Diccionario_arreglo:
+    palabras_frase = frase.split()  # Separar la frase en palabras
+
+    for i in range(len(Texto_completo_PDF1_arreglo) - len(palabras_frase) + 1):
+        if Texto_completo_PDF1_arreglo[i:i+len(palabras_frase)] == palabras_frase:
+            if frase in frecuancia_frase:
+                frecuancia_frase[frase] += 1
+            else:
+                frecuancia_frase[frase] = 1  
+
+for frase, frecuencia in frecuancia_frase.items():
+    print(f"{frase}: {frecuencia}")
+
+
+
+# Crear un nuevo PDF para guardar los resultados
+class PDF(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 12)
+        self.cell(0, 10, "Resultados de búsqueda", align="C", ln=True)
+
+pdf = PDF()
+pdf.add_page()
+
+for frase, frecuencia in frecuancia_frase.items():
+    texto = f"{frase}: {frecuencia}"
+    pdf.set_font("Arial", "", 10)
+    pdf.multi_cell(0, 10, texto)
+
+pdf_file = "resultados.pdf"
+pdf.output(pdf_file)

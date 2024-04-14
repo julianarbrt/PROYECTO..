@@ -1,0 +1,80 @@
+import PyPDF2
+
+#//<<------------------------------------------------>>//
+# Función Lectura de primer PDF
+
+# Abrir el PDF
+Archivo1 = open("D:\Comprobante_pago_anticipado.pdf", "rb")
+
+# Leer el PDF
+Lector_PDF = PyPDF2.PdfReader(Archivo1)
+
+# Almacenar texto del Archivo1 en una lista:
+Texto_completo_PDF1 = ""
+
+# Ciclo para leer todas las paginas
+for pagina in range(len(Lector_PDF.pages)):
+
+    # Establecer el contador de paginas en la pagina 1 y leerla
+    Leer_pagina = Lector_PDF.pages[pagina]
+
+    # Extraer texto de la pagina
+    texto_PDF1 = Leer_pagina.extract_text()
+
+    # Convertir a minusculas las palabras
+    texto_PDF1 = texto_PDF1.lower()
+
+    #Quitar caracteres que no contamos como palabras
+    eliminar = "\n,;:/'?¡¿!()[]+-*%_.•"
+    for caracter in eliminar:
+        texto_PDF1 = texto_PDF1.replace(caracter, "")
+
+    #Agregar a la variable texto_Diccionario
+    Texto_completo_PDF1 +=texto_PDF1
+
+
+#//<<------------------------------------------------>>//    
+
+   
+
+
+#//<<------------------------------------------------>>//
+# Función de Lectura del diccionario
+
+# Abrir el PDF
+Diccionario = open("D:\Práctica 2 termo.pdf", "rb")
+
+# Leer el PDF
+Lector_Diccionario = PyPDF2.PdfReader(Diccionario)
+
+# Almacenar texto del Archivo1 en una lista:
+Texto_Completo_Diccionario = ""
+
+# Ciclo para leer todas las paginas
+for pagina in range(len(Lector_Diccionario.pages)):
+
+    # Establecer el contador de paginas en la pagina 1 y leerla
+    Leer_pagina = Lector_Diccionario.pages[pagina]
+
+    # Extraer texto de la pagina
+    texto_Diccionario = Leer_pagina.extract_text()
+
+    # Convertir a minusculas las palabras
+    texto_Diccionario = texto_Diccionario.lower()
+    
+    #Quitar caracteres que no contamos como palabras
+    eliminar = "\n,;:/'?¡¿!()[]+-*%_."
+   
+    #Si esta en el texto de la lista, se elimina
+    for caracter in eliminar:
+        texto_Diccionario = texto_Diccionario.replace(caracter, "")
+
+    #Agregar a la variable texto_Diccionario
+    Texto_Completo_Diccionario +=texto_Diccionario
+
+#//<<------------------------------------------------>>//
+print(Texto_Completo_Diccionario)
+
+
+# Comparar textos por palabras
+codigo

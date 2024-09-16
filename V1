@@ -1,0 +1,33 @@
+import PyPDF2
+
+# Función Lectura de primer PDF
+
+# Abrir el PDF
+Archivo1 = open("D:\Práctica 2.pdf", "rb")
+
+# Leer el PDF
+Lector_PDF = PyPDF2.PdfReader(Archivo1)
+
+# Ciclo para leer todas las paginas
+for pagina in range(len(Lector_PDF.pages)):
+ # Establecer el contador de paginas en la pagina 1 y leerla
+    Leer_pagina = Lector_PDF.pages[pagina]
+    # Extraer texto de la pagina
+    texto_PDF1 = Leer_pagina.extract_text()
+   
+
+
+# Función de Lectura del diccionario
+
+# Abrir el PDF
+Diccionario = open("D:\Práctica 2 termo.pdf", "rb")
+
+# Leer el PDF
+Lector_Diccionario = PyPDF2.PdfReader(Diccionario)
+
+# Ciclo para leer todas las paginas
+for pagina in range(len(Lector_Diccionario.pages)):
+    # Establecer el contador de paginas en la pagina 1 y leerla
+    Leer_pagina = Lector_Diccionario.pages[pagina]
+    # Extraer texto de la pagina
+    texto_Diccionario = Leer_pagina.extract_text()
